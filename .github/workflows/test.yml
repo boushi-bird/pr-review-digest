@@ -1,0 +1,30 @@
+name: Test PR Review Digest
+
+on:
+  pull_request_review:
+  pull_request_review_comment:
+    types: [edited, deleted]
+  pull_request:
+
+jobs:
+  get-pr-comments:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: './'
+
+      - name: Build action
+        run: npm run build
+        working-directory: './'
+
+      - name: PR Review Digest
+        uses: ./
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          include-issue-comments: true

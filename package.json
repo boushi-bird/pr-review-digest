@@ -1,0 +1,32 @@
+{
+  "name": "pr-review-digest",
+  "version": "1.0.0",
+  "description": "このGitHub Actionは、プルリクエスト（PR）に投稿されたレビューコメントやIssueコメントをOpenAI APIを利用して自動的に要約し、その結果をPRの本文にチェックリストとして挿入・更新します。",
+  "main": "lib/index.js",
+  "private": true,
+  "scripts": {
+    "build": "ncc build src/index.ts -o lib",
+    "format": "prettier --write 'src/**/*.{ts,js}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boushi-bird/pr-review-digest.git"
+  },
+  "keywords": [],
+  "author": "boushi-bird <boushi-bird@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boushi-bird/pr-review-digest/issues"
+  },
+  "homepage": "https://github.com/boushi-bird/pr-review-digest#readme",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.1",
+    "@vercel/ncc": "^0.38.3",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}

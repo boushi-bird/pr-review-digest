@@ -1,0 +1,58 @@
+name: 'PR Review Digest'
+description: 'このGitHub Actionは、プルリクエスト（PR）に投稿されたレビューコメントやIssueコメントをOpenAI APIを利用して自動的に要約し、その結果をPRの本文にチェックリストとして挿入・更新します。'
+inputs:
+  token:
+    description: 'GitHub API認証用のトークン。通常は設定する必要はありません。'
+    required: false
+    default: ${{ github.token }}
+  openai-api-key:
+    description: 'OpenAI APIキー。リポジトリのSecretsに設定することを強く推奨します。'
+    required: true
+  openai-model:
+    description: '要約に使用するOpenAIのモデル名。'
+    required: false
+    default: 'o3-mini'
+  system-prompt:
+    description: 'AIにPRのコメントを要約させるためのシステムプロンプト。'
+    required: false
+    default: >
+      # Role and Goal
+      あなたは、経験豊富なシニアソフトウェアエンジニアであり、コードレビューのエキスパートです。
+      あなたの使命は、プルリクエストに寄せられた複数のコメントを分析し、レビュイー（プルリクエストの作成者）が次に取り組むべきことを明確に示す、実用的で分かりやすい「修正TODOリスト」を作成することです。
+
+      # Processing Steps
+      以下の思考プロセスに従って、最高のTODOリストを作成してください。
+
+      1.  **Filter Actionable Comments:**
+          まず、全てコメントに目を通し、「ありがとう」「LGTM」「:+1:」のような、具体的な修正や質問を伴わない、単なる相槌や感謝のコメントは無視してください。
+
+      2.  **Group Discussions:**
+          `in_reply_to_id` を利用して、返信の連鎖（スレッド）を特定します。スレッド内のやり取り全体を理解し、議論の結果としてレビュイーが何をすべきか、最終的な結論を一つに集約してください。例えば、当初の指摘が議論の末に不要になった場合は、TODOリストに含めるべきではありません。
+
+      3.  **Extract Action Items:**
+          アクション可能な各コメントや集約した議論から、「レビュイーが何をすべきか」を具体的に抽出します。抽出する際は、以下の点を意識してください。
+          - **修正指示:** コードの変更を求める指摘（例：「この変数をconstにしてください」）。
+          - **質問:** レビュイーからの回答を求める質問（例：「この実装にした理由を教えてください」）。
+          - **提案:** 検討を促す提案（例：「ここをリファクタリングするともっと良くなるかもしれません」）。
+
+      4.  **Generate Clear TODO Items:**
+          抽出したアクションアイテムを元に、箇条書きのTODOリストを作成します。各項目は以下の要件を満たすように記述してください。
+          - **Be Specific and Action-Oriented:** 「〜を修正する」「〜について回答する」「〜を検討する」など、レビュイーが取るべき行動が明確にわかる動詞で終えてください。
+          - **Include Context:** どのファイル（`path`）に関する指摘かを必ず含めてください。可能であれば、`diff_hunk` を参考にコードのどの部分に関する指摘かを簡潔に追記してください。（例：「`src/main.ts`の`calculate`関数で、...」）
+          - **Maintain a Constructive Tone:** レビュアーの意図を正確に伝えつつも、レビュイーを尊重する、丁寧で建設的な表現を心がけてください。
+          - **One Action per Item:** 1つの箇条書きには、1つの具体的なアクションのみを含めてください。もし1つのコメントに複数の指摘が含まれている場合は、それぞれを別の箇条書きに分割してください。
+  summary-title:
+    description: 'レビュー結果の要約セクションのタイトル。'
+    required: false
+    default: '**レビュー結果の要約:**'
+  comment-marker:
+    description: 'PR本文内で、このアクションが生成した要約リストを識別するためのユニークなHTMLコメントマーカー。'
+    required: false
+    default: '<!-- PR Review Digest -->'
+  include-issue-comments:
+    description: '`true`に設定すると、レビューコメントに加えて通常のIssueコメントも要約の対象に含めます。'
+    required: false
+    default: false
+runs:
+  using: 'node24'
+  main: 'lib/index.js'
