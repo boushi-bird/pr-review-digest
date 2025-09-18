@@ -42,9 +42,9 @@ inputs:
           - **Maintain a Constructive Tone:** レビュアーの意図を正確に伝えつつも、レビュイーを尊重する、丁寧で建設的な表現を心がけてください。
           - **One Action per Item:** 1つの箇条書きには、1つの具体的なアクションのみを含めてください。もし1つのコメントに複数の指摘が含まれている場合は、それぞれを別の箇条書きに分割してください。
   summary-title:
-    description: 'レビュー結果の要約セクションのタイトル。'
+    description: 'レビューの要約セクションのタイトル。'
     required: false
-    default: '**レビュー結果の要約:**'
+    default: '**レビューの要約:**'
   comment-marker:
     description: 'PR本文内で、このアクションが生成した要約リストを識別するためのユニークなHTMLコメントマーカー。'
     required: false
