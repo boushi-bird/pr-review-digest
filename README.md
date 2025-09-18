@@ -38,7 +38,7 @@ jobs:
       pull-requests: write # PRの本文を更新するために必要です
     steps:
       - name: Summarize PR Comments
-        uses: boushi-bird/pr-review-digest@v1.0.0
+        uses: boushi-bird/pr-review-digest@v1
         with:
           # 必須: OpenAIのAPIキーをSecretsに設定してください
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
